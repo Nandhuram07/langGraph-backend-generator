@@ -6,10 +6,10 @@ import fs from 'fs-extra';
 import chalk from 'chalk';
 import ora from 'ora';
 import { spawn } from 'child_process';
-import { startServer, syntaxCheck } from './processRunner';
-import { parseError, type ParsedError } from './errorParser';
-import { callAI } from '../utils/aiProvider';
-import { stripFences, fixImports } from '../codeSanitizer';
+import { startServer, syntaxCheck } from '@/runner/processRunner';
+import { parseError, type ParsedError } from '@/runner/errorParser';
+import { callAI } from '@/utils/aiProvider';
+import { stripFences, fixImports } from '@/codeSanitizer';
 
 export interface HealResult {
   success:  boolean;
