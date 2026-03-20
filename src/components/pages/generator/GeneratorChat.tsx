@@ -15,7 +15,7 @@ interface Message {
 
 export default function GeneratorChat() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hello! I'm your AI Backend Architect. What system would you like to build today?" }
+    { role: "assistant", content: "Hey! What's on your mind today?" }
   ])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -117,7 +117,7 @@ export default function GeneratorChat() {
   const startNewSession = () => {
     const newId = `sess-${Math.random().toString(36).substring(7)}`
     setThreadId(newId)
-    setMessages([{ role: "assistant", content: "Hello! I'm your AI Backend Architect. What system would you like to build today?" }])
+    setMessages([{ role: "assistant", content: "Hey! What's on your mind today?" }])
     setSchema([])
     setDb("")
     setFeatures([])
@@ -235,8 +235,8 @@ export default function GeneratorChat() {
           )}
         </div>
         <div className="flex items-center gap-2.5 px-1">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-[9px] font-bold text-stone-900 flex-shrink-0">SR</div>
-          <span className="text-sm font-medium text-stone-300 truncate">Srinidhi Raman</span>
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-[9px] font-bold text-stone-900 flex-shrink-0">U</div>
+          <span className="text-sm font-medium text-stone-300 truncate">USER</span>
         </div>
       </div>
     </div>
