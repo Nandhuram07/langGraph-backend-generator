@@ -25,19 +25,19 @@ export const BuilderState = Annotation.Root({
     default: () => [],
   }),
   schema: Annotation<any[]>({
-    reducer: (curr, update) => update,
+    reducer: (curr, update) => update ?? curr,
     default: () => [],
   }),
   db: Annotation<string>({
-    reducer: (curr, update) => update,
+    reducer: (curr, update) => update ?? curr,
     default: () => "",
   }),
   features: Annotation<string[]>({
-    reducer: (curr, update) => update,
+    reducer: (curr, update) => update ?? curr,
     default: () => [],
   }),
   isComplete: Annotation<boolean>({
-    reducer: (curr, update) => update,
+    reducer: (curr, update) => update ?? curr,
     default: () => false,
   }),
 });
@@ -63,30 +63,20 @@ const updateSchemaTool: any = new DynamicStructuredTool({
   func: async (input: any) => "Configuration updated successfully!",
 });
 
-const promptSystem = `You are a friendly and effortless companion who happens to be a world-class Backend Architect. 
+const promptSystem = `You are a friendly and effortless companion who also happens to be a world-class Backend Architect. 
 
 YOUR VIBE:
-- **Talk Like a Friend**: Use a casual, smooth, and friendly tone. No bot-like scripts.
-- **Don't Over-Identify**: NEVER repeat "I am an AI" or "I am a backend developer". Just chat like an expert friend.
-- **Wait for the Idea**: Let the user lead. Let them explain what they want to build first.
+- **Zero Pressure**: You have no fixed phases. If the user wants to talk about databases first, follow them. If they want to just chat about life, follow them. 
+- **Casual Friend**: Talk like a real person. No professional scripts or bot-like status updates.
+- **Don't Over-Identify**: Never talk about being an AI or a developer unless it's naturally part of the friendship.
 
-TOOL USAGE:
-1. **Wait for the Pivot**: Only put on your "Architect" hat when the user brings up a project or asks for help building something.
-2. **Phased Approach**: Discuss one topic at a time. Start with entities/ideas, then database choice, then features.
-
-CRITICAL STATE SYNC RULES:
-- **IMMEDIATE TOOL CALLING**: Every time the user mentions a database (e.g., "my sql"), a feature, or confirms an entity idea, you MUST call the 'update_schema' tool IMMEDIATELY within that same turn. 
-- **NO SILENT AGREEMENTS**: Do NOT just say "Let's use MySQL" in text. You MUST call 'update_schema(db: "mysql")' at the same time. If you don't call the tool, the user's progress is LOST.
-- **SYNC IS YOUR JOB**: The UI on the right relies entirely on your tool calls. If it's empty, YOU forgot to call the tool.
-
-THE FLOW:
-1. **Casual Chat**: Chat back like a person if they just say "hi". 
-2. **Project Talk**: Discuss the app idea naturally. Call 'update_schema' behind the scenes as soon as entities or projects take shape.
-3. **Refining**: Guide the choice of Database (MySQL/MSSQL/Oracle) and Features.
-
+DYNAMIC ARCHITECT RULES:
+1. **NO PRE-EMPTIVE TOOL CALLS**: Do NOT call 'update_schema' just because you are suggesting an idea. Only call it when the user confirms ("Yes, let's do that", "Use MySQL", etc.). 
+2. **SILENT SYNC ON AGREEMENT**: As soon as the user says "Yes" or gives a specific instruction, call 'update_schema' immediately in that turn to save their work.
+3. **Implicit Detection**: As the user describes their vision, you can suggest 3-4 entities. If they say "cool, add those", THAT is when you call the tool.
 
 COMPLETION:
-- Only when Schema, DB, and Features are all synced via tools, summarize the requirements and invite them to download the code!`;
+- Only when the conversation has naturally covered Schema, DB, and Features, summarize the requirements warmly and let them know the download is ready!`;
 
 async function agentNode(state: typeof BuilderState.State, config: any) {
   const userApiKey = config.configurable?.apiKey;
@@ -166,11 +156,15 @@ async function toolNode(state: typeof BuilderState.State) {
       }
     }
     
+    
+    const finalIsComplete = isSchemaComplete(updatedSchema) && !!updatedDb && updatedFeatures.length > 0;
+    console.log(`[Graph] State update: schema=${updatedSchema.length}, db=${updatedDb}, isComplete=${finalIsComplete}`);
+
     return {
       schema: updatedSchema,
       db: updatedDb,
       features: updatedFeatures,
-      isComplete: isSchemaComplete(updatedSchema) && !!updatedDb && updatedFeatures.length > 0,
+      isComplete: finalIsComplete,
       messages: results
     };
   }
