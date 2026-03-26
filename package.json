@@ -4,11 +4,17 @@
   "description": "AI-powered backend scaffolder — generates full Express.js backends from user input",
   "type": "module",
   "main": "dist/index.js",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "start": "next start",
     "dev": "next dev",
     "build": "next build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "mcp:dev": "tsx packages/mcp-server/src/index.ts",
+    "mcp:build": "cd packages/mcp-server && npm run build",
+    "mcp:install": "cd packages/mcp-server && npm install"
   },
   "dependencies": {
     "@langchain/core": "^1.1.33",
@@ -27,6 +33,8 @@
     "fs-extra": "^11.2.0",
     "inquirer": "^9.3.7",
     "lucide-react": "^0.577.0",
+    "mssql": "^12.2.1",
+    "mysql2": "^3.20.0",
     "next": "^16.1.7",
     "ora": "^8.1.0",
     "react": "^19.2.4",
